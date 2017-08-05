@@ -1,5 +1,7 @@
 var mysql = require('mysql');
 var inquirer = require('inquirer');
+var colors = require('colors');
+
 
 var connection = mysql.createConnection({
     host: 'localhost',
@@ -61,21 +63,22 @@ function displayProducts(err, res) {
                 console.log("Inquirer is working"); // connection
             }
             // console.log(res)
-        }
+        )
+    }
 
 
-        function openMenu() {
-            findProducts(displayProducts);
-        }
+    function openMenu() {
+        findProducts(displayProducts);
+    }
+}
 
+// VERIFY PURCHASE AGAINST CURRENT STOCK LEVELS
 
-        // VERIFY PURCHASE AGAINST CURRENT STOCK LEVELS
+// function to check if the store has enough in stock for the customer to buy. If the store has enough, move forward w transaction and do the following:
+// // fulfill the order
+// // // update the SQL database to reflect the remaining quantity
+// // // show the total cost of the purchase to the customer
+// // //display "thank you" message
+// // 
 
-        // function to check if the store has enough in stock for the customer to buy. If the store has enough, move forward w transaction and do the following:
-        // // fulfill the order
-        // // // update the SQL database to reflect the remaining quantity
-        // // // show the total cost of the purchase to the customer
-        // // //display "thank you" message
-        // // 
-
-        // // if the store does NOT have enough, do NOT move forward w transaction and display "error" message
+// // if the store does NOT have enough, do NOT move forward w transaction and display "error" message
