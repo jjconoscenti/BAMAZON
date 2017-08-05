@@ -5,12 +5,15 @@ var connection = mysql.createConnection({
     port: 3306,
     user: 'root',
     root: 'root',
-    password: "",
+    password: 'root',
     database: 'bamazon'
 });
 
 connection.connect(function(err) {
-    createProduct();
+    if (err) {
+        console.log("Error: " + err);
+    }
+    // createProduct();
 });
 
 function createProduct() {
@@ -23,9 +26,15 @@ function createProduct() {
         },
         function(err, res) {
             console.log(err);
-            console.log(res.affectedRows + 'product inserted');
+            //     console.log(res.affectedRows + 'product inserted');
         }
     )
+}
+
+
+function findProducts(callback) {
+    var query = connection.query(
+        'SELECT * FROM products', callback)
 }
 
 // CUSTOMER INTERACTION
@@ -34,6 +43,22 @@ function createProduct() {
 
 // (2/2) ask user how many units of the product they want to buy
 
+function openMenu() {
+    findProducts(displayProducts);
+}
+
+function displayProducts(err, res) {
+    if (err) {
+        console.log("Error found: " + err)
+    } else {
+        inquirer.prompt([{
+            type: "list",
+            message: "What's the ID of the product you want to buy?",
+            choices: ""
+        }])
+        console.log(res);
+    }
+}
 
 
 // VERIFY PURCHASE AGAINST CURRENT STOCK LEVELS
@@ -43,6 +68,6 @@ function createProduct() {
 // // // update the SQL database to reflect the remaining quantity
 // // // show the total cost of the purchase to the customer
 // // //display "thank you" message
-
+// // 
 
 // // if the store does NOT have enough, do NOT move forward w transaction and display "error" message
