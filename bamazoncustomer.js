@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var inquirer = require('inquirer');
 
 var connection = mysql.createConnection({
     host: 'localhost',
@@ -26,7 +27,7 @@ function createProduct() {
         },
         function(err, res) {
             console.log(err);
-            //     console.log(res.affectedRows + 'product inserted');
+            //  console.log(res.affectedRows + 'product inserted');
         }
     )
 }
@@ -38,36 +39,43 @@ function findProducts(callback) {
 }
 
 // CUSTOMER INTERACTION
-
-// (1/2) ask user the item of the id they want to buy
-
-// (2/2) ask user how many units of the product they want to buy
-
-function openMenu() {
-    findProducts(displayProducts);
-}
-
 function displayProducts(err, res) {
     if (err) {
         console.log("Error found: " + err)
     } else {
+        // (1/2) ask user the item of the id they want to buy
         inquirer.prompt([{
-            type: "list",
-            message: "What's the ID of the product you want to buy?",
-            choices: ""
-        }])
-        console.log(res);
-    }
-}
+                name: "item_id",
+                type: "input",
+                message: "What's the ID of the product you want to buy?"
+            },
+            // (2/2) ask user how many units of the product they want to buy
+            {
+                name: "item_quantity",
+                type: "input",
+                message: "How many would you like to buy?"
+            }
+        ]).then(function(order) {
+                var itemId = order.itemd_id;
+                var quantity = order.item_quantity;
+                console.log("Inquirer is working"); // connection
+            }
+            // console.log(res)
+        }
 
 
-// VERIFY PURCHASE AGAINST CURRENT STOCK LEVELS
+        function openMenu() {
+            findProducts(displayProducts);
+        }
 
-// function to check if the store has enough in stock for the customer to buy. If the store has enough, move forward w transaction and do the following:
-// // fulfill the order
-// // // update the SQL database to reflect the remaining quantity
-// // // show the total cost of the purchase to the customer
-// // //display "thank you" message
-// // 
 
-// // if the store does NOT have enough, do NOT move forward w transaction and display "error" message
+        // VERIFY PURCHASE AGAINST CURRENT STOCK LEVELS
+
+        // function to check if the store has enough in stock for the customer to buy. If the store has enough, move forward w transaction and do the following:
+        // // fulfill the order
+        // // // update the SQL database to reflect the remaining quantity
+        // // // show the total cost of the purchase to the customer
+        // // //display "thank you" message
+        // // 
+
+        // // if the store does NOT have enough, do NOT move forward w transaction and display "error" message
