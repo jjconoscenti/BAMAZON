@@ -2,6 +2,21 @@ var inquirer = require('inquirer');
 var colors = require('colors');
 var mysql = require('mysql');
 
+// create connection
+var connection = mysql.createConnection({
+    host: '127.0.0.1',
+    port: 3306,
+    user: 'root',
+    password: 'root',
+    database: 'bamazon'
+});
+
+// connection
+connection.connect(function(err) {
+    if (err) throw err;
+    startApp();
+})
+
 // global functions
 function showInventory() {
     console.log("Show inventory");
@@ -15,7 +30,7 @@ function showCart() {
     console.log("Show cart");
 }
 
-function menu(err, res) {
+function startApp(err, res) {
     if (err) {
         console.log(colors.red('Error found: ' + err));
     } else {
@@ -58,10 +73,8 @@ function menu(err, res) {
 
                 case 'Exit':
                     console.log(colors.yellow("Thanks for shopping with Bamazon!"));
-                    break;
+                    process.exit();
             }
         })
     }
 }
-
-menu()
