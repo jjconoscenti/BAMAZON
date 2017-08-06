@@ -4,10 +4,9 @@ var colors = require('colors');
 
 
 var connection = mysql.createConnection({
-    host: 'localhost',
+    host: '127.0.0.1',
     port: 3306,
     user: 'root',
-    root: 'root',
     password: 'root',
     database: 'bamazon'
 });
@@ -18,6 +17,10 @@ connection.connect(function(err) {
     }
     // createProduct();
 });
+
+function openMenu() {
+    findProducts(displayProducts);
+}
 
 function createProduct() {
     var query = connection.query(
@@ -37,7 +40,8 @@ function createProduct() {
 
 function findProducts(callback) {
     var query = connection.query(
-        'SELECT * FROM products', callback)
+        'SELECT * FROM products', callback);
+    // console.log(query);
 }
 
 // CUSTOMER INTERACTION
@@ -46,6 +50,8 @@ function displayProducts(err, res) {
         console.log("Error found: " + err)
     } else {
         // (1/2) ask user the item of the id they want to buy
+
+        console.log(res);
         inquirer.prompt([{
                 name: "item_id",
                 type: "input",
@@ -60,18 +66,15 @@ function displayProducts(err, res) {
         ]).then(function(order) {
                 var itemId = order.itemd_id;
                 var quantity = order.item_quantity;
-                console.log("Inquirer is working"); // connection
+                console.log("Inquirer is working");
+                // connection
             }
             // console.log(res)
         )
     }
-
-
-    function openMenu() {
-        findProducts(displayProducts);
-    }
 }
 
+openMenu();
 // VERIFY PURCHASE AGAINST CURRENT STOCK LEVELS
 
 // function to check if the store has enough in stock for the customer to buy. If the store has enough, move forward w transaction and do the following:
