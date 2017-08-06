@@ -54,6 +54,7 @@ function menu(err, res) {
                 case "View Cart":
                     console.log(colors.green("Here's your cart"));
                     waitMsg = setTimeout(showCart, 2000);
+                    break;
 
                 case 'Exit':
                     console.log(colors.yellow("Thanks for shopping with Bamazon!"));
