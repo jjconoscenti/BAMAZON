@@ -11,15 +11,11 @@ var connection = mysql.createConnection({
     database: 'bamazon'
 });
 
-// connection
+// connect & start app
 connection.connect(function(err) {
     if (err) throw err;
     startApp();
 })
-
-// global variable
-var availableProducts = [];
-
 
 // global functions
 function showInventory() {
@@ -38,27 +34,28 @@ function showInventory() {
 }
 
 function shopStore() {
-    console.log("Shop store");
     showInventory();
     connection.query('SELECT * FROM products', function(err, res) {
         if (err) throw err;
         inquirer
             .prompt([{
-                name: "customerShopping",
-                type: "list",
-                choices: function() {
-                    var availableProducts = [];
-                    for (var i = 0; i < res.length; i++) {
-                        availableProducts.push(res[i].product_name);
-                    }
-                    return availableProducts;
+                    name: "customerShopping",
+                    type: "list",
+                    choices: function() {
+                        var availableProducts = [];
+                        for (var i = 0; i < res.length; i++) {
+                            availableProducts.push(res[i].product_name);
+                        }
+                        return availableProducts;
+                    },
+                    message: "What would you like to buy"
                 },
-                message: "What would you like to buy"
-            }, {
-                name: "purchaseQuantity",
-                type: "input",
-                message: "How many do you want to buy?"
-            }]).then(function(answer) {
+                {
+                    name: "purchaseQuantity",
+                    type: "input",
+                    message: "How many do you want to buy?"
+                }
+            ]).then(function(answer) {
                 var customerCart;
                 for (var i = 0; i < res.length; i++) {
                     if (res[i].product_name === answer.choice) {
@@ -75,7 +72,7 @@ function shopStore() {
                                 item_id: customerCart.item_id
                             }
                         ],
-                        function(err) {
+                        function(res, err) {
                             if (err) throw err;
                             var cartTotal = customerCart.price * parseInt(answer.purchaseQuantity);
                             console.log(colors.grey(`Purchase complete! Here's your receipt:`));
@@ -119,18 +116,14 @@ function startApp(err, res) {
             name: 'customerSelection',
             type: 'list',
             message: 'Welcome to Bamazon, what would you like to do?',
-            choices: ["Shop", "View Cart", "Exit"]
+            choices: ["Shop", "Exit"]
         }]).then(function(answer) {
             var waitMsg;
 
             switch (answer.customerSelection) {
 
-                // case "View Store Items":
-                //     console.log(colors.green("View store items"));
-                //     waitMsg = setTimeout(showInventory, 2000);
-                //     break;
-
                 case "Shop":
+                    console.log(colors.green("Get ready to drop some dough!"));
                     waitMsg = setTimeout(shopStore, 2000);
                     break;
 
