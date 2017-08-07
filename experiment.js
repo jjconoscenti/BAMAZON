@@ -17,9 +17,24 @@ connection.connect(function(err) {
     startApp();
 })
 
+// global variable
+var customerCart = [];
+
+
 // global functions
 function showInventory() {
-    console.log("Show inventory");
+    var query = 'SELECT * FROM products';
+    connection.query(query, function(err, res, fields) {
+        if (err) throw err;
+        console.log('\n');
+        console.log('\n');
+        console.log(colors.green("============================="));
+        console.log(colors.white("Here's what we have available"));
+        console.log(colors.green("============================="));
+        for (var i = 0; i < res.length; i++) {
+            console.log(colors.white(`=============================\nitem_id: ${res[i].item_id}\nproduct: ${res[i].product_name}\nprice: ${res[i].price}\n=============================\n`));
+        }
+    });
 }
 
 function shopStore() {
@@ -29,7 +44,7 @@ function shopStore() {
 function showCart() {
     console.log("Show cart");
 }
-
+// create a product
 function createProduct() {
     var query = connection.query(
         'INSERT INTO products set ?', {
@@ -44,9 +59,7 @@ function createProduct() {
     )
 }
 
-
-
-
+// start the app
 function startApp(err, res) {
     if (err) {
         console.log(colors.red('Error found: ' + err));
@@ -67,19 +80,6 @@ function startApp(err, res) {
                 //     break;
 
                 case "Shop":
-                    console.log(colors.green("============================="));
-                    console.log(colors.white("Here's what we have available"));
-                    console.log(colors.green("============================="));
-                    console.log(colors.white("item1 id " + "|" + " item1 name " + "|" + " item1 price " + "|" + " item1 stockqty"));
-                    console.log(colors.blue("item1 id " + "|" + " item1 name " + "|" + " item1 price " + "|" + " item1 stockqty"));
-                    console.log(colors.white("item1 id " + "|" + " item1 name " + "|" + " item1 price " + "|" + " item1 stockqty"));
-                    console.log(colors.blue("item1 id " + "|" + " item1 name " + "|" + " item1 price " + "|" + " item1 stockqty"));
-                    console.log(colors.white("item1 id " + "|" + " item1 name " + "|" + " item1 price " + "|" + " item1 stockqty"));
-                    console.log(colors.blue("item1 id " + "|" + " item1 name " + "|" + " item1 price " + "|" + " item1 stockqty"));
-                    console.log(colors.white("item1 id " + "|" + " item1 name " + "|" + " item1 price " + "|" + " item1 stockqty"));
-                    console.log(colors.blue("item1 id " + "|" + " item1 name " + "|" + " item1 price " + "|" + " item1 stockqty"));
-                    console.log(colors.white("item1 id " + "|" + " item1 name " + "|" + " item1 price " + "|" + " item1 stockqty"));
-                    console.log(colors.blue("item1 id " + "|" + " item1 name " + "|" + " item1 price " + "|" + " item1 stockqty"));
                     waitMsg = setTimeout(shopStore, 2000);
                     break;
 
@@ -95,3 +95,5 @@ function startApp(err, res) {
         })
     }
 }
+
+showInventory();
