@@ -18,7 +18,7 @@ connection.connect(function(err) {
 })
 
 // global variable
-var customerCart = [];
+var availableProducts = [];
 
 
 // global functions
@@ -27,18 +27,69 @@ function showInventory() {
     connection.query(query, function(err, res, fields) {
         if (err) throw err;
         console.log('\n');
-        console.log('\n');
         console.log(colors.green("============================="));
         console.log(colors.white("Here's what we have available"));
         console.log(colors.green("============================="));
+        console.log('\n');
         for (var i = 0; i < res.length; i++) {
-            console.log(colors.white(`=============================\nitem_id: ${res[i].item_id}\nproduct: ${res[i].product_name}\nprice: ${res[i].price}\n=============================\n`));
+            console.log(colors.white(`=============================\nPRODUCT: ${res[i].product_name}\nQUANTITY AVAILABLE: ${res[i].stock_quantity}\nPRICE: ${res[i].price}\n=============================\n`));
         }
     });
 }
 
 function shopStore() {
     console.log("Shop store");
+    showInventory();
+    connection.query('SELECT * FROM products', function(err, res) {
+        if (err) throw err;
+        inquirer
+            .prompt([{
+                name: "customerShopping",
+                type: "list",
+                choices: function() {
+                    var availableProducts = [];
+                    for (var i = 0; i < res.length; i++) {
+                        availableProducts.push(res[i].product_name);
+                    }
+                    return availableProducts;
+                },
+                message: "What would you like to buy"
+            }, {
+                name: "purchaseQuantity",
+                type: "input",
+                message: "How many do you want to buy?"
+            }]).then(function(answer) {
+                var customerCart;
+                for (var i = 0; i < res.length; i++) {
+                    if (res[i].product_name === answer.choice) {
+                        customerCart = res[i];
+                    }
+                }
+                // parseInt to convert customer answer (string) as integer
+                if (customerCart - parseInt(answer.purchaseQuantity) >= 0) {
+                    connection.query(
+                        'UPDATE products SET ? WHERE ?', [{
+                                stock_quantity: customerCart.stock_quantity - parseInt(answer.purchaseQuantity)
+                            },
+                            {
+                                item_id: customerCart.item_id
+                            }
+                        ],
+                        function(err) {
+                            if (err) throw err;
+                            var cartTotal = customerCart.price * parseInt(answer.purchaseQuantity);
+                            console.log(colors.grey(`Purchase complete! Here's your receipt:`));
+                            console.log(colors.white(`QTY: ${answer.purchaseQuantity} x ${customerCart.product_name}`));
+                            console.log(colors.green(`Total: ${cartTotal}`));
+                            startApp();
+                        }
+                    );
+                } else {
+                    console.log(colors.red(`Oh no! We're out of stock on that item! Take a look around the shop for something else.`));
+                    startApp();
+                }
+            })
+    })
 }
 
 function showCart() {
@@ -95,5 +146,3 @@ function startApp(err, res) {
         })
     }
 }
-
-showInventory();
