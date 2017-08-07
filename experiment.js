@@ -33,9 +33,9 @@ function showCart() {
 function createProduct() {
     var query = connection.query(
         'INSERT INTO products set ?', {
-            product_name: 'shake weight',
-            department_name: 'fitness',
-            price: 19.99,
+            product_name: 'Keurig Coffee Maker',
+            department_name: 'Kitchen Appliances',
+            price: 89.99,
             stock_quantity: 999
         },
         function(err, res) {
