@@ -30,6 +30,23 @@ function showCart() {
     console.log("Show cart");
 }
 
+function createProduct() {
+    var query = connection.query(
+        'INSERT INTO products set ?', {
+            product_name: 'shake weight',
+            department_name: 'fitness',
+            price: 19.99,
+            stock_quantity: 999
+        },
+        function(err, res) {
+            console.log(res.affectedRows + 'product inserted');
+        }
+    )
+}
+
+
+
+
 function startApp(err, res) {
     if (err) {
         console.log(colors.red('Error found: ' + err));
