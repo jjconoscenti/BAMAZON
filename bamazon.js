@@ -57,13 +57,17 @@ function shopStore() {
                 }
             ]).then(function(answer) {
                 var customerCart;
+                console.log(answer.customerShopping);
                 for (var i = 0; i < res.length; i++) {
-                    if (res[i].product_name === answer.choice) {
+                    if (res[i].product_name === answer.customerShopping) {
+                        console.log(res[i]);
                         customerCart = res[i];
                     }
                 }
+
                 // parseInt to convert customer answer (string) as integer
-                if (customerCart - parseInt(answer.purchaseQuantity) >= 0) {
+                var inventoryAmt = customerCart.price - parseInt(answer.purchaseQuantity);
+                if (inventoryAmt >= 0) {
                     connection.query(
                         'UPDATE products SET ? WHERE ?', [{
                                 stock_quantity: customerCart.stock_quantity - parseInt(answer.purchaseQuantity)
@@ -72,11 +76,15 @@ function shopStore() {
                                 item_id: customerCart.item_id
                             }
                         ],
-                        function(res, err) {
-                            if (err) throw err;
+                        function(err, res) {
+                            if (err) {
+                                console.log("something went wrong:", err);
+                                throw err;
+                            }
+
                             var cartTotal = customerCart.price * parseInt(answer.purchaseQuantity);
                             console.log(colors.grey(`Purchase complete! Here's your receipt:`));
-                            console.log(colors.white(`QTY: ${answer.purchaseQuantity} x ${customerCart.product_name}`));
+                            console.log(colors.white(`QTY: ${answer.purchaseQuantity} x ${customerCart.price}`));
                             console.log(colors.green(`Total: ${cartTotal}`));
                             startApp();
                         }
